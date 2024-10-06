@@ -1,8 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { AnalysisService } from './analysis.service';
 import { ForecastWeatherQueryDTO } from 'src/dto/ForecastWeatherQueryDTO';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RespuestaDTO } from 'src/dto/ProcessDataDTO';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Analysis')
 @Controller('analisis')

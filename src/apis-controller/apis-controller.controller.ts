@@ -3,9 +3,9 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentWeatherQueryDTO } from 'src/dto/CurrentWeatherQueryDTO';
 import { ForecastWeatherQueryDTO } from 'src/dto/ForecastWeatherQueryDTO';
 import { FutureWeatherQueryDTO } from 'src/dto/FutureWeatherQueryDTO';
-import { CurrentWeatherResponseDTO } from 'src/dto/response/CurrentWeatherResponseDTO';
-import { ForecastWeatherResponseDTO } from 'src/dto/response/ForecastWeatherResponseDTO';
-import { FutureWeatherResponseDTO } from 'src/dto/response/FutureWeatherResponseDTO';
+import { CurrentWeatherResponseDTO } from 'src/dto/response/WeatherAPI/CurrentWeatherResponseDTO';
+import { ForecastWeatherResponseDTO } from 'src/dto/response/WeatherAPI/ForecastWeatherResponseDTO';
+import { FutureWeatherResponseDTO } from 'src/dto/response/WeatherAPI/FutureWeatherResponseDTO';
 import { WeatherAPIService } from 'src/providers/weatherAPI/http.service';
 
 @ApiTags('API-Weather')
