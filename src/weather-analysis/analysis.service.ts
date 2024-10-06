@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GeminiService } from 'src/api-gemini/gemini.service';
-import { WeatherQueryDto } from 'src/dto/WeatherQueryDto';
+import { ForecastWeatherQueryDTO } from 'src/dto/ForecastWeatherQueryDTO';
 import { WeatherAPIService } from 'src/providers/weatherAPI/http.service';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class AnalysisService {
     private readonly geminiService: GeminiService,
   ) {}
 
-  async getAnalysisWeather(query: WeatherQueryDto, tipoCultivo: string) {
+  async getAnalysisWeather(query: ForecastWeatherQueryDTO, tipoCultivo: string) {
     const forecastWeather =
       await this.weatherAPIService.getForecastWeather(query);
 

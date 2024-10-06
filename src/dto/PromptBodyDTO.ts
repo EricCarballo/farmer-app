@@ -1,6 +1,11 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
 
-export class PromptBody {
+export class PromptBodyDTO {
+  @ApiProperty({
+    description: 'Prompt para gemini',
+    type: String,
+  })
   @IsString()
   prompt: string;
 }

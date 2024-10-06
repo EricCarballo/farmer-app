@@ -21,7 +21,7 @@ export class WeatherRequestBuilder {
     return this;
   }
 
-  setUnixDt(unixdt: string) {
+  setUnixDt(unixdt: number) {
     if (unixdt) this.params['unixdt'] = unixdt;
     return this;
   }

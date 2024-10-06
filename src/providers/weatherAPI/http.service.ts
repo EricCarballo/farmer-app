@@ -4,8 +4,10 @@ import { firstValueFrom } from 'rxjs';
 import { ErrorManager } from 'src/utils/error.manager';
 import { WeatherRequestBuilder } from 'src/builders/WeatherRequestBuilder';
 import apiConfig from '../../config/apiConfig.json';
-import { WeatherQueryDto } from 'src/dto/WeatherQueryDto';
+import { ForecastWeatherQueryDTO } from 'src/dto/ForecastWeatherQueryDTO';
 import { ConfigService } from '@nestjs/config';
+import { CurrentWeatherQueryDTO } from 'src/dto/CurrentWeatherQueryDTO';
+import { FutureWeatherQueryDTO } from 'src/dto/FutureWeatherQueryDTO';
 
 @Injectable()
 export class WeatherAPIService {
@@ -14,7 +16,7 @@ export class WeatherAPIService {
     private configService: ConfigService,
   ) {}
 
-  public async getCurrentWeather(query: WeatherQueryDto) {
+  public async getCurrentWeather(query: CurrentWeatherQueryDTO) {
     try {
       const builder = new WeatherRequestBuilder(query.q).setLang(query.lang);
       const params = builder.build();
@@ -27,7 +29,7 @@ export class WeatherAPIService {
     }
   }
 
-  public async getForecastWeather(query: WeatherQueryDto) {
+  public async getForecastWeather(query: ForecastWeatherQueryDTO) {
     try {
       const builder = new WeatherRequestBuilder(query.q)
         .setDays(query?.days)
@@ -48,7 +50,7 @@ export class WeatherAPIService {
     }
   }
 
-  public async getFutureWeather(query: WeatherQueryDto) {
+  public async getFutureWeather(query: FutureWeatherQueryDTO) {
     try {
       const builder = new WeatherRequestBuilder(query.q).setDt(query.dt).setLang(query.lang);
       const params = builder.build();
