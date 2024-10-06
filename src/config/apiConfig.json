@@ -1,0 +1,8 @@
+{
+    "apiWeather": {
+        "baseUrl": "https://api.weatherapi.com/v1/",
+        "currentWeather": "current.json",
+        "forecastWeather": "forecast.json",
+        "futureWeather": "future.json"
+    }
+}
