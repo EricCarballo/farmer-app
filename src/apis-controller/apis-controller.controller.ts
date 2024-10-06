@@ -7,11 +7,8 @@ export class ApisController {
   constructor(private readonly weatherService: WeatherAPIService) {}
 
   @Get('current')
-  public async getCurrentWeather(
-    @Query('q') q: string,
-    @Query('lang') lang?: string,
-  ) {
-    return await this.weatherService.getCurrentWeather(q, lang);
+  public async getCurrentWeather(@Query() query: WeatherQueryDto) {
+    return await this.weatherService.getCurrentWeather(query);
   }
 
   @Get('forecast')
@@ -20,10 +17,7 @@ export class ApisController {
   }
 
   @Get('future')
-  public async getFutureWeather(
-    @Query('q') q: string,
-    @Query('lang') lang?: string,
-  ) {
-    return await this.weatherService.getFutureWeather(q, lang);
+  public async getFutureWeather(@Query() query: WeatherQueryDto) {
+    return await this.weatherService.getFutureWeather(query);
   }
 }

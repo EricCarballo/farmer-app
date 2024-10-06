@@ -9,7 +9,9 @@ import {
 } from '@nestjs/common';
 import { GeminiService } from './gemini.service';
 import { PromptBody } from 'src/dto/PromptBodyDTO';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { editFileName, validateImageFile } from 'src/utils/functions';
 
 @Controller('gemini')
 export class GeminiController {
@@ -21,15 +23,21 @@ export class GeminiController {
     return this.geminiService.getPromptResponse(body.prompt);
   }
 
-  @UseInterceptors(FilesInterceptor('images', 10))
   @HttpCode(HttpStatus.OK)
   @Post('prompt-with-image')
+  @UseInterceptors(
+    FilesInterceptor('images', 10, {
+      fileFilter: validateImageFile,
+      storage: diskStorage({
+        destination: 'upload',
+        filename: editFileName,
+      }),
+    }),
+  )
   getPromptWithImageResponse(
     @UploadedFiles() images: Array<Express.Multer.File>,
     @Body() body: PromptBody,
   ) {
-    console.log(images);
-    console.log(body);
-    return true;
+    return this.geminiService.getPromptWithImageResponse(images, body.prompt);
   }
 }

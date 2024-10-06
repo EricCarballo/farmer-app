@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { ErrorManager } from 'src/utils/error.mangaer';
+import { ErrorManager } from 'src/utils/error.manager';
 import { WeatherRequestBuilder } from 'src/builders/WeatherRequestBuilder';
 import apiConfig from '../../config/apiConfig.json';
 import { WeatherQueryDto } from 'src/dto/WeatherQueryDto';
@@ -14,9 +14,9 @@ export class WeatherAPIService {
     private configService: ConfigService,
   ) {}
 
-  public async getCurrentWeather(q: string, lang?: string) {
+  public async getCurrentWeather(query: WeatherQueryDto) {
     try {
-      const builder = new WeatherRequestBuilder(q).setLang(lang);
+      const builder = new WeatherRequestBuilder(query.q).setLang(query.lang);
       const params = builder.build();
       const url = `${apiConfig.apiWeather.baseUrl}${apiConfig.apiWeather.currentWeather}?${params}&key=${this.configService.get('WEATHER_API_KEY')}`;
       console.log(url);
@@ -48,9 +48,9 @@ export class WeatherAPIService {
     }
   }
 
-  public async getFutureWeather(q: string, dt?: string, lang?: string) {
+  public async getFutureWeather(query: WeatherQueryDto) {
     try {
-      const builder = new WeatherRequestBuilder(q).setDt(dt).setLang(lang);
+      const builder = new WeatherRequestBuilder(query.q).setDt(query.dt).setLang(query.lang);
       const params = builder.build();
       const url = `${apiConfig.apiWeather.baseUrl}${apiConfig.apiWeather.futureWeather}?${params}&key=${this.configService.get('WEATHER_API_KEY')}`;
 
