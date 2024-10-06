@@ -13,7 +13,7 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName, validateImageFile } from 'src/utils/functions';
 import { PromptBodyWithImagesDTO } from 'src/dto/PromptBodyWithImagesDTO';
-import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('API-Gemini')
 @Controller('gemini')
@@ -26,6 +26,11 @@ export class GeminiController {
     summary: 'Obtener respuesta para un prompt',
     description: 'Envía un prompt de texto a Gemini y obtiene una respuesta generada por la IA.',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Respuesta generada por la IA.',
+    //type: string,
+  })
   getPromptResponse(@Body() body: PromptBodyDTO) {
     return this.geminiService.getPromptResponse(body.prompt);
   }
@@ -35,6 +40,11 @@ export class GeminiController {
   @ApiOperation({
     summary: 'Obtener respuesta para un prompt con imágenes',
     description: 'Envía un prompt de texto junto con imágenes para obtener una respuesta generada por la IA.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Respuesta generada por la IA con imágenes.',
+    //type: string,
   })
   @ApiConsumes('multipart/form-data') // Indica que este endpoint consume multipart/form-data
   @UseInterceptors(

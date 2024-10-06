@@ -18,7 +18,7 @@ export class AnalysisService {
     const promptDataWeather = this.createGeminiPrompt(processData, tipoCultivo);
     const responseGemini =
       await this.geminiService.getPromptResponse(promptDataWeather);
-    return { responseGemini, processData };
+    return { responseGemini, forecastWeather };
   }
 
   private processWeatherData(data: any) {

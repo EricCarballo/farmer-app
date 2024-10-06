@@ -1,7 +1,8 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { AnalysisService } from './analysis.service';
 import { ForecastWeatherQueryDTO } from 'src/dto/ForecastWeatherQueryDTO';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { RespuestaDTO } from 'src/dto/ProcessDataDTO';
 
 @ApiTags('Analysis')
 @Controller('analisis')
@@ -13,6 +14,11 @@ export class AnalysisController {
     summary: 'Obtener análisis climático y recomendaciones para un cultivo',
     description:
       'Obtiene el pronóstico del clima y pasa los datos a Gemini para generar un análisis con recomendaciones específicas para el cultivo proporcionado.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Pronóstico del clima obtenido exitosamente.',
+    //type: RespuestaDTO,
   })
   async getAnalysisWeather(
     @Query() query: ForecastWeatherQueryDTO,

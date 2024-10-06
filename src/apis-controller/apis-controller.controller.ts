@@ -1,8 +1,11 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentWeatherQueryDTO } from 'src/dto/CurrentWeatherQueryDTO';
 import { ForecastWeatherQueryDTO } from 'src/dto/ForecastWeatherQueryDTO';
 import { FutureWeatherQueryDTO } from 'src/dto/FutureWeatherQueryDTO';
+import { CurrentWeatherResponseDTO } from 'src/dto/response/CurrentWeatherResponseDTO';
+import { ForecastWeatherResponseDTO } from 'src/dto/response/ForecastWeatherResponseDTO';
+import { FutureWeatherResponseDTO } from 'src/dto/response/FutureWeatherResponseDTO';
 import { WeatherAPIService } from 'src/providers/weatherAPI/http.service';
 
 @ApiTags('API-Weather')
@@ -16,6 +19,12 @@ export class ApisController {
     description:
       'Obtiene el clima actual basado en el query proporcionado, como ciudad o coordenadas.',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Clima actual obtenido exitosamente.',
+    type: CurrentWeatherResponseDTO,
+  })
+  @ApiResponse({ status: 400, description: 'Solicitud inválida.' })
   public async getCurrentWeather(@Query() query: CurrentWeatherQueryDTO) {
     return await this.weatherService.getCurrentWeather(query);
   }
@@ -26,6 +35,12 @@ export class ApisController {
     description:
       'Obtiene el pronóstico meteorológico basado en los días solicitados y otros parámetros del query.',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Pronóstico del clima obtenido exitosamente.',
+    type: ForecastWeatherResponseDTO,
+  })
+  @ApiResponse({ status: 400, description: 'Solicitud inválida.' })
   public async getForecastWeather(@Query() query: ForecastWeatherQueryDTO) {
     return await this.weatherService.getForecastWeather(query);
   }
@@ -36,6 +51,12 @@ export class ApisController {
     description:
       'Obtiene la predicción del clima para una fecha futura especificada en el query.',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'Predicción del clima futuro obtenida exitosamente.',
+    type: FutureWeatherResponseDTO,
+  })
+  @ApiResponse({ status: 400, description: 'Solicitud inválida.' })
   public async getFutureWeather(@Query() query: FutureWeatherQueryDTO) {
     return await this.weatherService.getFutureWeather(query);
   }
