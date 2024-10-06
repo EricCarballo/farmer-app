@@ -10,12 +10,15 @@ export class AnalysisService {
     private readonly geminiService: GeminiService,
   ) {}
 
-  async getAnalysisWeather(query: ForecastWeatherQueryDTO, tipoCultivo: string) {
+  async getAnalysisWeather(
+    query: ForecastWeatherQueryDTO,
+    tipoCultivo: string,
+  ) {
     const forecastWeather =
       await this.weatherAPIService.getForecastWeather(query);
 
     const processData = this.processWeatherData(forecastWeather);
-    const promptDataWeather = this.createGeminiPrompt(processData, tipoCultivo);
+    const promptDataWeather = this.createGeminiPromptV2(processData, tipoCultivo);
     const responseGemini =
       await this.geminiService.getPromptResponse(promptDataWeather);
     return { responseGemini, forecastWeather };
@@ -89,6 +92,120 @@ Con base en estos datos, proporciona un análisis detallado del clima para el pe
 10. *Advertencias climáticas potencialmente peligrosas:* Identifica cualquier día con condiciones climáticas extremas que puedan representar un riesgo para *${tipoCultivo}*.
 11. *Cualquier otra observación relevante:* Menciona cualquier patrón climático adicional que pueda afectar *${tipoCultivo}* durante el período analizado.
 
-Por favor, estructura tu respuesta en párrafos claros y concisos, organizando la información por días y proporcionando recomendaciones específicas para *${tipoCultivo}*.`;
+Por favor, estructura tu respuesta en párrafos claros y concisos, organizando la información por días y proporcionando recomendaciones específicas para *${tipoCultivo}*.
+`;
+  }
+
+  createGeminiPromptV2(weatherData: any, tipoCultivo: string) {
+    // Primero, verificamos si el tipo de cultivo es válido
+    const invalidInputMessage = `
+  # Error: Tipo de Cultivo No Válido
+  
+  Lo siento, pero "${tipoCultivo}" no parece ser un tipo de cultivo válido. Por favor, ingrese un cultivo agrícola real, como por ejemplo:
+  - Frutas (manzanas, fresas, uvas)
+  - Verduras (tomates, zanahorias, lechugas)
+  - Cereales (maíz, trigo, arroz)
+  - Otros cultivos agrícolas
+  
+  Este sistema está diseñado para ayudar a agricultores con cultivos reales.
+  `;
+
+    // Lista de palabras clave agrícolas para validación básica
+    const palabrasClaveAgricolas = [
+      'fruta',
+      'verdura',
+      'hortaliza',
+      'cereal',
+      'árbol',
+      'planta',
+      'semilla',
+      'cultivo',
+      'cosecha',
+      'huerto',
+      'jardín',
+      'agricultura',
+    ];
+
+    // Verificar si el tipo de cultivo contiene alguna palabra clave agrícola
+    const esValido =
+      palabrasClaveAgricolas.some((palabra) =>
+        tipoCultivo.toLowerCase().includes(palabra.toLowerCase()),
+      ) ||
+      // Añadir algunas validaciones específicas para cultivos comunes
+      /^(manzana|pera|fresa|tomate|maíz|trigo|arroz|papa|frijol|calabaza)s?$/i.test(
+        tipoCultivo,
+      );
+
+    if (!esValido) {
+      return invalidInputMessage;
+    }
+
+    const singleDayPrompt = (forecast) => `
+  Fecha: ${forecast.date}
+  Temperatura: Máxima ${forecast.maxTemp}°C, Mínima ${forecast.minTemp}°C, Promedio ${forecast.avgTemp}°C
+  Viento máximo: ${forecast.maxWind} km/h
+  Precipitación total: ${forecast.totalPrecip} mm
+  Humedad promedio: ${forecast.avgHumidity}%
+  Condición general: ${forecast.condition}
+  Amanecer: ${forecast.sunrise}, Atardecer: ${forecast.sunset}
+  
+  Pronóstico por horas:
+  ${forecast.hourlyForecast
+    .map(
+      (hour) =>
+        `${hour.time}: ${hour.temp}°C, ${hour.condition}, ${hour.chanceOfRain}% de probabilidad de lluvia`,
+    )
+    .join('\n')}
+  `;
+
+    const forecastsPrompt = weatherData.forecasts
+      .map(singleDayPrompt)
+      .join('\n\n');
+
+    return `
+  # Análisis Meteorológico para Agricultura
+  
+  ## Ubicación y Cultivo
+  Análisis meteorológico para **${weatherData.location}** enfocado en el cultivo de **${tipoCultivo}**
+  
+  ## Datos Meteorológicos
+  ${forecastsPrompt}
+  
+  ---
+  
+  Por favor, proporciona un análisis detallado en formato Markdown que incluya:
+  
+  1. **Resumen General del Período**
+     - Condiciones climáticas promedio
+     - Impacto esperado en ${tipoCultivo}
+  
+  2. **Tendencias Climáticas Notables**
+     - Patrones de temperatura
+     - Patrones de precipitación
+     - Implicaciones para ${tipoCultivo}
+  
+  3. **Recomendaciones de Manejo**
+     - Programación de riego
+     - Protección contra temperaturas extremas
+     - Prevención de enfermedades
+     - Momentos óptimos para siembra/cosecha
+     - Aplicación de fertilizantes y pesticidas
+  
+  4. **Alertas y Precauciones**
+     - Condiciones adversas previstas
+     - Medidas preventivas recomendadas
+  
+  5. **Optimización del Cultivo**
+     - Estrategias de polinización
+     - Ajustes en prácticas agrícolas
+  
+  Por favor, estructura la respuesta en Markdown, utilizando:
+  - Encabezados (#, ##, ###)
+  - Listas con viñetas (-)
+  - Texto en negrita (**) para puntos importantes
+  - Tablas para datos comparativos si es necesario
+  
+  Mantén un tono profesional pero accesible, orientado a agricultores prácticos.
+  `;
   }
 }
